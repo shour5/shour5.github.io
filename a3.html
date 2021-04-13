@@ -35,7 +35,6 @@
     const margin = {top: 0, right: 0, bottom: 0, left: 0};
     const width = 960 - margin.left - margin.right;
     const height = 1000 - margin.top - margin.bottom;
-    let clicked = false;
 
 
     const color = d3.scaleThreshold()
@@ -97,6 +96,7 @@
                     .style('stroke-width', 5)
                     .style('stroke', 'black')
             })
+            brush.end();
         })
 
         scatterplot.append("g").call(brush);
@@ -133,23 +133,7 @@
             .style('stroke', 'white')
             .style('opacity', 0.8)
             .style('stroke-width', 0.3)
-            .on('mouseover',function(d){})
-            .on('mouseout', function(d){})
-        .on('click', function (d) {
-            if (clicked == true) {
-                d3.select(this)
-                    .style('stroke-width',0.3)
-                    .style('stroke', 'white')
-
-                scatterplot.selectAll('.dot')
-                    .filter(function(f) {
-                        return f.id == d.id;
-                    })
-                    .style('stroke-width', 0)
-                    .style('stroke', 'none')
-                clicked = false
-            }
-            else {
+            .on('mouseover',function(d){
                 d3.select(this)
                     .style('stroke-width', 5)
                     .style('stroke', 'black')
@@ -161,10 +145,22 @@
                     })
                     .style('stroke-width', 5)
                     .style('stroke', 'black')
-                clicked = true
-            }
 
-        })
+
+            })
+            .on('mouseout', function(d){
+                d3.select(this)
+                    .style('stroke-width',0.3)
+                    .style('stroke', 'white')
+
+                scatterplot.selectAll('.dot')
+                    .filter(function(f) {
+                        return f.id == d.id;
+                    })
+                    .style('stroke-width', 0)
+                    .style('stroke', 'none')
+            })
+
 
         svg.append('path')
             .datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
@@ -222,16 +218,16 @@
             .attr("cy", yMap)
             .style("fill", function(d) { return color(d[fieldColor]);})
             .on("mouseover", function(d) {
-                /*d3.select(this)
+                d3.select(this)
                     .style('stroke-width', 5)
-                    .style('stroke', 'black')*/
+                    .style('stroke', 'black')
                 console.log(this)
 
             })
             .on("mouseout", function(d) {
-                /*d3.select(this)
+                d3.select(this)
                     .style('stroke-width', 0)
-                    .style('stroke', 'none')*/
+                    .style('stroke', 'none')
             })
 
         // draw legend
